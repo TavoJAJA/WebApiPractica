@@ -15,9 +15,9 @@ namespace WebApiPractica.Controllers
 
     }
     public tipo_ekipo(tipo_ekipoContext tipo_ekipoContext)
-    
+
     {
-            _tipo_equipo = tipo_ekipoContexto;
+        _tipo_equipo = tipo_ekipoContexto;
     }
 
     [HttpGet]
@@ -40,14 +40,71 @@ namespace WebApiPractica.Controllers
     public IActionsResult Get(int id)
     {
         tipo_equipo? tipo_ekipo = (from e in tipo_ekipoContext._tipo_equipo
-                           where e.tipo_ekipo == id
-                           select e).FirstOrDefault();
+                                   where e.tipo_ekipo == id
+                                   select e).FirstOrDefault();
 
         if (tipo_equipo == null)
         {
             return NotFound();
 
         }
+        return Ok(tipo_equipo);
+    }
+
+    [HttpPost]
+    [Route("Add")]
+
+    public IActionResult Guardartipo_ekipos([FromBody] tipo_equipo tipo_Equipo)
+    {
+        try
+        {
+            tipo_ekipoContexto.marcas.Add(tipo_Equipo);
+            tipo_ekipoContexto.SaveChanges();
+            return Ok(tipo_Equipo);
+        }
+
+        catch (Exception ex)
+        {
+            return BadRequest(Exception.Messages);
+        }
+    }
+
+    [HttpPut]
+    [Route("actualizar/{id}")]
+
+    public IActionResult ActualizartipoEquipo(int id, [FromBody] tipo_equipo modificarTipoEquipo)
+    {
+        tipo_equipo? tipoEquipoActual = (from e in tipo_ekipoContext.tipo_equipo
+                                where e.id_equipos == id
+                                select e).FirstOrDefault();
+        if tipoEquipoActual == null)
+        { return NotFound(); }.
+
+            tipoEquipoActual.tipo_ekipo = modificarTipoEquipo.tipo_ekipo;
+            tipoEquipoActual.descripcion = modificarTipoEquipo.descripcion;
+        tipoEquipoActual.estado = modificarTipoEquipo.estado;
+
+        tipo_ekipoContext.Entry(tipoEquipoActual).State = EntityState.Modified;
+        tipo_ekipoContextSaveChanges();
+
+        return Ok(modificarTipoEquipo);
+    }
+
+    [HttpDelete]
+    [Route("eliminar/{id}")]
+    public IActionsResult EliminartipoEquipo(int id)
+    {
+        marcas? marcas = (from e in tipo_ekipoContext.tipo_equipo
+                          where e.id_marcas == id
+                          select e).FirstOrDefault();
+
+        if (marcas == null)
+            return NotFound();
+
+        tipo_ekipoContext.tipo_equipo.Attach(tipo_equipo;
+        tipo_ekipoContext.tipo_equipo.Remove(tipo_equipo);
+        tipo_ekipoContext.SaveChanges();
+
         return Ok(tipo_equipo);
     }
 }

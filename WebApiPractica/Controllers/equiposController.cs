@@ -11,6 +11,12 @@ namespace WebApiPractica.Controllers
     {
         private readonly equiposContext _equiposContexto;
 
+        private readonly equiposDbContext _equiposDbContext;
+        public equiposController(equiposDbContext equiposDbContext)
+        {
+            _equiposDbContext = equiposDbContext;
+        }
+
     }
 
     public equiposController(equiposContext equiposContexto) 
@@ -120,6 +126,15 @@ namespace WebApiPractica.Controllers
         _equiposContexto.SaveChanges();
 
         return Ok(equipo);
+    }
+
+    public IActionResult Index() 
+    {
+        var listaDeMarcas = (from m in _equiposDbContext.marcas
+                             select m) toList();
+        ViewData["listadoDeMarcas"] = new HeaderEncodingSelectorList(listaDeMarcas, "id_marcas", "nombre_demarca");
+
+        return View();
     }
 
 }
